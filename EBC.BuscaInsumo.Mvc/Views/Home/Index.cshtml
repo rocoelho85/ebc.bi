@@ -1,0 +1,21 @@
+﻿@{
+	ViewBag.Title = "Busca Insumo";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="searchContainer" style="width: 100%; padding-top: 120px;">
+	<div style=" text-align: center; width:inherit;">
+
+		<h2>O que voce procura para sua cerveja ?</h2>
+
+		@using (Html.BeginForm("Search", "Home", FormMethod.Post)) {
+
+			@Html.TextBox("terms", null, new { style = "width:80%" })
+			<input type="submit" id="searchButton" value="Buscar Insumos" />
+			
+		}
+
+		
+		
+	</div>
+</div>

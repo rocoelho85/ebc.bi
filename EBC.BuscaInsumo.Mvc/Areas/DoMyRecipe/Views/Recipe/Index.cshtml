@@ -1,0 +1,149 @@
+﻿@model EBC.BuscaInsumo.Mvc.Areas.DoMyRecipe.Models.RecipeViewModel
+@{
+	ViewBag.Title = "Index";
+	Layout = "../Shared/_Layout.cshtml";
+}
+
+@*<style type="text/css">
+		.unselectedGrain {
+			background-color: #ffffff;
+		}
+
+		.selectedGrain {
+			background-color: #000000;
+		}
+	</style>*@
+
+<style>
+	#feedback {
+		font-size: 1.4em;
+	}
+
+	#selectable .ui-selecting {
+		background: #FECA40;
+	}
+
+	#selectable .ui-selected {
+		background: #F39814;
+		color: white;
+	}
+
+	#selectable {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+		width: 60%;
+	}
+
+		#selectable li {
+			margin: 3px;
+			padding: 0.4em;
+			font-size: 1.4em;
+			height: 18px;
+		}
+</style>
+
+<script type="text/javascript" language="javascript">
+
+	function callSearchGrain(value) {
+
+		$.ajax({
+			url: "http://localhost/EBC.BuscaInsumo.Mvc/DoMyRecipe/Recipe/SearchGrain",
+			data: { name: value },
+			dataType: "json",
+			method: "GET"
+		}).done(function (obj) {
+			$("#grainSearchResult").html("");
+			for (var i = 0; i < obj.length; i++) {
+				$("#grainSearchResult").append(createElementResultSearchGrain(obj[i].Id, obj[i].Name, obj[i].Notes));
+			}
+		}).error(function (obj) {
+
+		});
+	}
+
+	function createElementResultSearchGrain(id, name, notes) {
+		// onclick='javascript:onclickSearchResult(this);'
+		// class='unselectedGrain'
+		// selectedGrain='false'
+		return "<div grainId=" + id + " id='grain" + id + "' class='ui-widget-content'>" + name + "<br/><div style='font-size:smaller'>" + notes + "</div></div>";
+	}
+
+	function isArrowKey(keyCode) {
+		return (keyCode.keyCode === 38 || keyCode.keyCode === 40)
+	}
+
+
+
+	function onclickSearchResult(obj) {
+		$("div [id^=grain]").removeClass("selectedGrain");
+		if ($(obj).attr("selectedGrain") === "false") {
+			$(obj).attr("selectedGrain", "true");
+			$(obj).removeClass("unselectedGrain");
+			$(obj).addClass("selectedGrain");
+		} else {
+			$(obj).attr("selectedGrain", "false");
+			$(obj).removeClass("selectedGrain");
+			$(obj).addClass("unselectedGrain");
+		}
+	}
+
+	$(document).ready(function () {
+
+		$("#style").change(function () {
+
+			$.ajax({
+				url: "http://localhost/EBC.BuscaInsumo.Mvc/DoMyRecipe/Recipe/GetSelectedStyle",
+				data: { id: $(this).val() },
+				dataType: "json",
+				method: "GET"
+			}).done(function (obj) {
+
+			}).error(function (obj) {
+
+			});
+		});
+
+		$("#grainSearch").keyup(function (keyCode) {
+
+			//if (isArrowKey(keyCode)) {
+			//} else {
+			callSearchGrain($(this).val());
+			//}
+
+			$("#grainSearchResult").selectable({
+				stop: function () {
+					var result = $("#select-result").empty();
+					$(".ui-selected", this).each(function () {
+						var index = $("#selectable div").index(this);
+						result.append(" #" + (index + 1));
+					});
+				}
+			});
+
+		});
+
+
+	});
+
+</script>
+
+<h2>Nova Receita</h2>
+
+<select id="style">
+	<option value="0">Select</option>
+	@foreach (EBC.BuscaInsumo.Mvc.Areas.DoMyRecipe.Domain.Objects.Style style in @Model.Styles) {
+		<option value="@style.Id">@style.Name</option>
+	}
+</select>
+
+
+<br />
+<div>
+	<span id="select-result">none</span>
+	<input type="text" id="grainSearch" /><br />
+	<div id="grainSearchResult">
+
+
+	</div>
+</div>

@@ -1,0 +1,52 @@
+﻿@model EBC.BuscaInsumo.Mvc.ViewModels.SearchViewModel
+
+
+@{
+	ViewBag.Title = "Search";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div style="text-align: center; width: 100%; vertical-align: top; padding-top: 120px; ">
+
+	<h2>O que voce procura para sua cerveja ?</h2>
+	@using (Html.BeginForm("Search", "Home", FormMethod.Post)) {
+		@Html.TextBoxFor(obj => obj.terms, new { style = "width:80%" })
+		<input type="submit" id="searchButton" value="Buscar Insumos" />
+	}
+
+
+	<table style="width:100%;">
+		<tr>
+			<th colspan="3">
+				@Model.model.Count() produtos encontrados
+			</th>
+		</tr>
+		@foreach (var item in @Model.model) {
+			<tr>
+				<td align="left">
+
+					@Html.DisplayFor(modelItem => item.name)<br />
+					<span style="font-size:smaller">@item.description</span>
+				</td>
+
+				<td align="center">
+					@Html.DisplayFor(modelItem => item.price)
+				</td>
+				<td align="left">
+					<a href='@item.link' target="_blank">
+						<img src='@item.image' alt="Ir para a loja" style="width:120px;">
+					</a>
+				</td>
+				<td align="right">
+					<a href='@item.link' target="_blank">
+						<img src='~/Content/images/source_images/@item.logo_image' alt="Ir para a loja" style="width:120px;">
+					</a>
+				</td>
+			</tr>
+		}
+	</table>
+
+
+</div>
+
